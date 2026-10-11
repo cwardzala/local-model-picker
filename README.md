@@ -1,5 +1,9 @@
 # Local Model Picker
 
+**[Live app: local-model-picker.vercel.app](https://local-model-picker.vercel.app)**
+
+![Local Model Picker ranking models for coding on an M4 Pro with 48 GB](public/preview.jpg)
+
 Pick the best open model your machine can run, for the job you have in mind.
 Model data (parameter counts, context length, downloads) is fetched live from
 the [Hugging Face API](https://huggingface.co/docs/hub/api) in the browser —
@@ -43,3 +47,14 @@ a model spills over. Mixture-of-experts models use active parameters for speed (
 from names like `30B-A3B`) and the geometric mean of active and total
 parameters as a dense-equivalent size for capability. Task profiles in `src/lib/tasks.ts` set the context
 size, minimum quant quality, minimum model size and speed-vs-capability weight.
+
+## Estimates and feedback
+
+Speed and memory figures are rule-of-thumb estimates, not benchmarks. If a
+number doesn't match what you measured, please
+[open an "Estimate mismatch" issue](https://github.com/cwardzala/local-model-picker/issues/new?template=estimate-mismatch.yml)
+with your hardware, model and runtime; real measurements are what improve them.
+
+## License
+
+[MIT](LICENSE)
