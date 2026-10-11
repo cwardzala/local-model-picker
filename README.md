@@ -8,7 +8,9 @@ there is no backend.
 1. Choose your hardware (Mac chip + memory, or PC GPU + RAM).
 2. Choose a task: chat, coding, data processing, note taking, writing, images.
 3. Get ranked GGUF models with the best quant that fits, estimated tokens/s,
-   and a copy-paste Ollama / llama.cpp command.
+   and a copy-paste Ollama / llama.cpp command. Fine-tunes and re-quantisations
+   of the same architecture and size are grouped under one card (toggle "Group
+   similar").
 
 ## Develop
 

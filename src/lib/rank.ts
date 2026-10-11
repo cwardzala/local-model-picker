@@ -90,3 +90,34 @@ export function sortRanked(list: RankedModel[], key: SortKey): RankedModel[] {
   })
   return out
 }
+
+export interface RankedGroup {
+  /** Best-ranked member; the one shown as the card. */
+  lead: RankedModel
+  /** Other repos with the same architecture and size, in ranked order. */
+  similar: RankedModel[]
+}
+
+/**
+ * Fine-tunes and re-quantisations of one model rarely share a base_model tag,
+ * but they share an architecture and parameter count. Size is bucketed on a
+ * log scale (~25% wide) so 34.7B and 35.5B repos land together.
+ */
+export function variantKey(m: HfModel): string {
+  const bucket = Math.round(Math.log2(Math.max(m.paramsB, 0.1)) * 3)
+  const moe = m.activeParamsB < m.paramsB ? `a${Math.round(m.activeParamsB)}` : 'dense'
+  return `${m.architecture ?? m.id}|${bucket}|${moe}`
+}
+
+/** Collapses an already-sorted list; each group sits where its best member was. */
+export function groupRanked(sorted: RankedModel[], enabled = true): RankedGroup[] {
+  if (!enabled) return sorted.map((lead) => ({ lead, similar: [] }))
+  const groups = new Map<string, RankedGroup>()
+  for (const r of sorted) {
+    const key = variantKey(r.model)
+    const g = groups.get(key)
+    if (g) g.similar.push(r)
+    else groups.set(key, { lead: r, similar: [] })
+  }
+  return [...groups.values()]
+}

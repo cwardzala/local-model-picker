@@ -2,6 +2,7 @@ import type { RankedModel } from '../lib/rank'
 import type { Hardware } from '../lib/types'
 import { CopyButton } from './CopyButton'
 import { FitBadge } from './FitBadge'
+import { SimilarModels } from './SimilarModels'
 
 const compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 const fmtParams = (b: number) => (b >= 100 ? b.toFixed(0) : b.toFixed(1)) + 'B'
@@ -12,9 +13,10 @@ interface Props {
   /** Marks the single recommended model. */
   topPick?: boolean
   taskLabel: string
+  similar?: RankedModel[]
 }
 
-export function ModelCard({ ranked, hw, topPick, taskLabel }: Props) {
+export function ModelCard({ ranked, hw, topPick, taskLabel, similar = [] }: Props) {
   const { model, evaluation: ev, score, factors, reasons, warnings } = ranked
   const [org, name] = model.id.split('/')
   const quant = ev.quant.name
@@ -87,6 +89,8 @@ export function ModelCard({ ranked, hw, topPick, taskLabel }: Props) {
           <p>The ✓ and ! notes above then raise or lower the result.</p>
         </details>
       )}
+
+      <SimilarModels items={similar} />
 
       {runs && (
         <div class="actions">
