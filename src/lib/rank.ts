@@ -7,6 +7,8 @@ export interface RankedModel {
   evaluation: Evaluation
   /** 0–100 suitability for the selected task on this hardware. */
   score: number
+  /** The inputs behind the score, each 0–1, plus how the task weights speed. */
+  factors: { capability: number; speed: number; speedWeight: number }
   reasons: string[]
   warnings: string[]
 }
@@ -22,7 +24,8 @@ export function rankModel(model: HfModel, hw: Hardware, task: TaskProfile): Rank
   const warnings: string[] = []
 
   if (evaluation.fit === 'no') {
-    return { model, evaluation, score: 0, reasons, warnings: ['Does not fit in memory'] }
+    const factors = { capability: 0, speed: 0, speedWeight: task.speedWeight }
+    return { model, evaluation, score: 0, factors, reasons, warnings: ['Does not fit in memory'] }
   }
 
   // Capability: log-scaled size, saturating at the task's sweet spot.
@@ -62,7 +65,8 @@ export function rankModel(model: HfModel, hw: Hardware, task: TaskProfile): Rank
   score *= 0.7 + 0.3 * clamp01((Math.log10(model.downloads + 1) - 4) / 2.5)
   if (TRUSTED.test(model.id.split('/')[0])) score *= 1.1
 
-  return { model, evaluation, score: Math.min(100, score), reasons, warnings }
+  const factors = { capability, speed, speedWeight: task.speedWeight }
+  return { model, evaluation, score: Math.min(100, score), factors, reasons, warnings }
 }
 
 export type SortKey = 'best' | 'fastest' | 'popular'

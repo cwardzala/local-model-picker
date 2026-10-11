@@ -11,10 +11,11 @@ interface Props {
   hw: Hardware
   /** Marks the single recommended model. */
   topPick?: boolean
+  taskLabel: string
 }
 
-export function ModelCard({ ranked, hw, topPick }: Props) {
-  const { model, evaluation: ev, score, reasons, warnings } = ranked
+export function ModelCard({ ranked, hw, topPick, taskLabel }: Props) {
+  const { model, evaluation: ev, score, factors, reasons, warnings } = ranked
   const [org, name] = model.id.split('/')
   const quant = ev.quant.name
   const runs = ev.fit !== 'no'
@@ -40,9 +41,9 @@ export function ModelCard({ ranked, hw, topPick }: Props) {
           <span class="org">{org}</span>
         </div>
         {runs && (
-          <span class="match" title="How well this suits your task on this hardware">
+          <span class="match" title={`How well this suits ${taskLabel.toLowerCase()} on your computer, out of 100`}>
             {Math.round(score)}
-            <small>match</small>
+            <small>/ 100 match</small>
           </span>
         )}
       </header>
@@ -62,6 +63,29 @@ export function ModelCard({ ranked, hw, topPick }: Props) {
           {reasons.map((r) => <li class="plus">{r}</li>)}
           {notes.map((w) => <li class="minus">{w}</li>)}
         </ul>
+      )}
+
+      {runs && (
+        <details class="why">
+          <summary>Why {Math.round(score)}?</summary>
+          <ul>
+            <li>
+              <strong>Capability {Math.round(factors.capability * 100)}</strong>
+              <span>model size vs. what {taskLabel.toLowerCase()} needs</span>
+            </li>
+            <li>
+              <strong>Speed {Math.round(factors.speed * 100)}</strong>
+              <span>~{Math.round(ev.tokensPerSec)} tok/s; 30 or more scores full marks</span>
+            </li>
+            <li>
+              <strong>
+                {Math.round(factors.speedWeight * 100)}% speed · {Math.round((1 - factors.speedWeight) * 100)}% capability
+              </strong>
+              <span>how {taskLabel.toLowerCase()} weighs the two</span>
+            </li>
+          </ul>
+          <p>The ✓ and ! notes above then raise or lower the result.</p>
+        </details>
       )}
 
       {runs && (

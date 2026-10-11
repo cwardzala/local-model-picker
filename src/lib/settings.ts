@@ -12,6 +12,7 @@ export interface Settings {
   hideTooBig: boolean
   /** False until the user has set memory themselves; drives the "please confirm" hint. */
   memoryConfirmed: boolean
+  introDismissed: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -22,4 +23,5 @@ export const DEFAULT_SETTINGS: Settings = {
   sort: 'best',
   hideTooBig: true,
   memoryConfirmed: false,
+  introDismissed: false,
 }

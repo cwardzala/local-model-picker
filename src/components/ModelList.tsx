@@ -10,10 +10,11 @@ interface Props {
   hasMore: boolean
   /** Highlight the first runnable model as the recommendation. */
   highlightTop: boolean
+  taskLabel: string
   onMore: () => void
 }
 
-export function ModelList({ items, hw, loading, error, hasMore, highlightTop, onMore }: Props) {
+export function ModelList({ items, hw, loading, error, hasMore, highlightTop, taskLabel, onMore }: Props) {
   if (error) return <p class="status err">Couldn’t reach Hugging Face: {error}</p>
   if (!items.length) {
     return <p class="status">{loading ? 'Asking Hugging Face…' : 'No models match. Try a different search or hide fewer.'}</p>
@@ -22,7 +23,7 @@ export function ModelList({ items, hw, loading, error, hasMore, highlightTop, on
     <>
       <div class="grid">
         {items.map((r, i) => (
-          <ModelCard key={r.model.id} ranked={r} hw={hw} topPick={highlightTop && i === 0 && r.evaluation.fit !== 'no'} />
+          <ModelCard key={r.model.id} ranked={r} hw={hw} taskLabel={taskLabel} topPick={highlightTop && i === 0 && r.evaluation.fit !== 'no'} />
         ))}
       </div>
       {hasMore && (
