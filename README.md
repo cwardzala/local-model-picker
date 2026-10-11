@@ -2,7 +2,7 @@
 
 **[Live app: local-model-picker.vercel.app](https://local-model-picker.vercel.app)**
 
-![Local Model Picker ranking models for coding on an M4 Pro with 48 GB](public/preview.jpg)
+![Local Model Picker ranking models for coding on an M4 Pro with 48 GB](docs/screenshot.jpg)
 
 Pick the best open model your machine can run, for the job you have in mind.
 Model data (parameter counts, context length, downloads) is fetched live from
