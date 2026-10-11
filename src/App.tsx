@@ -5,6 +5,7 @@ import { rankModel, sortRanked, type SortKey } from './lib/rank'
 import { DEFAULT_SETTINGS } from './lib/settings'
 import { taskById } from './lib/tasks'
 import { HardwarePanel } from './components/HardwarePanel'
+import { Intro } from './components/Intro'
 import { ModelList } from './components/ModelList'
 import { Section } from './components/Section'
 import { TaskPicker } from './components/TaskPicker'
@@ -13,7 +14,12 @@ export function App() {
   const [settings, setSettings] = useStoredState('lmp.settings', DEFAULT_SETTINGS)
   const [query, setQuery] = useState('')
   const [search, setSearch] = useState('')
+  const [showIntro, setShowIntro] = useState(!settings.introDismissed)
   const task = taskById(settings.task)
+  const dismissIntro = () => {
+    setShowIntro(false)
+    setSettings({ ...settings, introDismissed: true })
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(query), 400)
@@ -35,9 +41,16 @@ export function App() {
   return (
     <main>
       <header class="masthead">
-        <h1>Local Model Picker</h1>
-        <p>The best open model your machine can run, for the job you have in mind.</p>
+        <div>
+          <h1>Local Model Picker</h1>
+          <p>The best open model your machine can run, for the job you have in mind.</p>
+        </div>
+        {!showIntro && (
+          <button type="button" class="link-btn" onClick={() => setShowIntro(true)}>How it works</button>
+        )}
       </header>
+
+      {showIntro && <Intro onDismiss={dismissIntro} />}
 
       <div class="layout">
         <aside>
@@ -68,7 +81,7 @@ export function App() {
               </label>
             </div>
             <ModelList items={ranked} hw={settings.hardware} loading={loading} error={error}
-              hasMore={Boolean(next)} highlightTop={settings.sort === 'best'} onMore={loadMore} />
+              hasMore={Boolean(next)} highlightTop={settings.sort === 'best'} taskLabel={task.label} onMore={loadMore} />
           </Section>
         </div>
       </div>

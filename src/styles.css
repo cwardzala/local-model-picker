@@ -36,6 +36,7 @@ body {
   font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 48px; }
+.masthead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .masthead h1 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
 .masthead p { margin: 4px 0 28px; color: var(--muted); }
 
@@ -100,7 +101,7 @@ small, .note { color: var(--muted); font-size: 12px; }
 .card-title a:hover { color: var(--accent); text-decoration: underline; }
 .org { color: var(--muted); font-size: 13px; }
 .match { display: grid; justify-items: center; font-size: 20px; font-weight: 700; line-height: 1; color: var(--accent); }
-.match small { font-size: 10px; font-weight: 400; margin-top: 2px; }
+.match small { font-size: 10px; font-weight: 400; margin-top: 3px; white-space: nowrap; color: var(--muted); }
 .key { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
 .fit { font-weight: 700; }
 .fit::before { content: "● "; }
@@ -116,3 +117,22 @@ small, .note { color: var(--muted); font-size: 12px; }
 .status { padding: 32px; text-align: center; color: var(--muted); }
 .status.err { color: var(--bad); }
 footer { margin-top: 40px; color: var(--muted); font-size: 12px; }
+
+.link-btn { background: none; border: 0; padding: 4px 0; color: var(--accent); cursor: pointer; font-size: 14px; white-space: nowrap; }
+.link-btn:hover { text-decoration: underline; }
+
+.intro { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 8px; padding: 16px 18px; margin-bottom: 28px; display: grid; gap: 14px; }
+.intro h2 { margin: 0; font-size: 16px; }
+.intro ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.intro dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.intro dt { font-weight: 600; font-size: 13px; }
+.intro dd { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.intro .btn { justify-self: start; }
+
+.why { font-size: 13px; color: var(--muted); }
+.why summary { cursor: pointer; color: var(--accent); width: fit-content; }
+.why ul { margin: 8px 0 4px; padding: 0; list-style: none; display: grid; gap: 4px; }
+.why li { display: grid; }
+.why li strong { color: var(--ink); font-weight: 600; }
+.why p { margin: 4px 0 0; }
