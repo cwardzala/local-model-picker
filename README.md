@@ -35,6 +35,7 @@ docker run --rm -p 8080:8080 local-model-picker
 
 `memory = params × bits-per-quant / 8 + KV cache + ~0.8 GB`. Speed is
 `bandwidth / active-weight-bytes × 0.6`, blended between GPU and system RAM when
-a model spills over. Mixture-of-experts models use active parameters (parsed
-from names like `30B-A3B`). Task profiles in `src/lib/tasks.ts` set the context
+a model spills over. Mixture-of-experts models use active parameters for speed (parsed
+from names like `30B-A3B`) and the geometric mean of active and total
+parameters as a dense-equivalent size for capability. Task profiles in `src/lib/tasks.ts` set the context
 size, minimum quant quality, minimum model size and speed-vs-capability weight.

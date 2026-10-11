@@ -16,6 +16,13 @@ export interface RankedModel {
 const TRUSTED =
   /^(unsloth|bartowski|lmstudio-community|ggml-org|Qwen|meta-llama|google|mistralai|microsoft|ibm-granite|deepseek-ai|HuggingFaceTB|LiquidAI|nvidia)$/i
 
+/**
+ * Dense-equivalent size for judging quality. A mixture-of-experts model is
+ * only as fast as its active parameters but as capable as something between
+ * active and total; the geometric mean is a common rule of thumb.
+ */
+export const effectiveParamsB = (m: HfModel) => Math.sqrt(m.activeParamsB * m.paramsB)
+
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
 
 export function rankModel(model: HfModel, hw: Hardware, task: TaskProfile): RankedModel {
@@ -29,12 +36,13 @@ export function rankModel(model: HfModel, hw: Hardware, task: TaskProfile): Rank
   }
 
   // Capability: log-scaled size, saturating at the task's sweet spot.
-  const capability = clamp01(Math.log(model.activeParamsB + 1) / Math.log(task.sweetSpotB + 1))
+  const effectiveB = effectiveParamsB(model)
+  const capability = clamp01(Math.log(effectiveB + 1) / Math.log(task.sweetSpotB + 1))
   // Speed: 30 tok/s feels instant for most tasks.
   const speed = clamp01(evaluation.tokensPerSec / 30)
   let score = 100 * ((1 - task.speedWeight) * capability + task.speedWeight * speed)
 
-  if (model.paramsB < task.minParamsB) {
+  if (effectiveB < task.minParamsB) {
     score *= 0.5
     warnings.push(`Small for ${task.label.toLowerCase()} (<${task.minParamsB}B)`)
   }

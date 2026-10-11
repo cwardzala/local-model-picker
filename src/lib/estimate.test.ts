@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { activeParamsFromId, evaluate, pickQuant } from './estimate'
 import { QUANTS } from './quants'
-import { rankModel } from './rank'
+import { effectiveParamsB, rankModel } from './rank'
 import { taskById } from './tasks'
 import type { Hardware, HfModel } from './types'
 
@@ -61,5 +61,28 @@ describe('rankModel', () => {
     const tiny = model(1.5)
     expect(rankModel(tiny, hw, taskById('data')).warnings.length).toBeGreaterThan(0)
     expect(rankModel(tiny, hw, taskById('notes')).warnings.some((w) => /Small/.test(w))).toBe(true)
+  })
+})
+
+describe('mixture-of-experts ranking', () => {
+  const hw = mac(64, 400)
+  const task = taskById('chat')
+  const moe = model(30, { id: 'a/Big-30B-A3B', activeParamsB: 3 })
+
+  it('treats an MoE as bigger than its active size but smaller than its total', () => {
+    expect(effectiveParamsB(moe)).toBeGreaterThan(3)
+    expect(effectiveParamsB(moe)).toBeLessThan(30)
+    expect(effectiveParamsB(model(8))).toBe(8)
+  })
+  it('scores capability between a dense model of its active and of its total size', () => {
+    const small = rankModel(model(3), hw, task).factors.capability
+    const big = rankModel(model(30), hw, task).factors.capability
+    const mid = rankModel(moe, hw, task).factors.capability
+    expect(mid).toBeGreaterThan(small)
+    expect(mid).toBeLessThan(big)
+  })
+  it('still runs faster than a dense model of the same total size', () => {
+    const dense = rankModel(model(30), hw, task).evaluation.tokensPerSec
+    expect(rankModel(moe, hw, task).evaluation.tokensPerSec).toBeGreaterThan(dense)
   })
 })
