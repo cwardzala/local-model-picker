@@ -1,7 +1,6 @@
 import type { Hardware } from './types'
 import type { TaskId } from './tasks'
 import type { SortKey } from './rank'
-import type { ThemeId } from './themes'
 import { DEFAULT_HARDWARE } from './hardware'
 
 export interface Settings {
@@ -11,7 +10,6 @@ export interface Settings {
   task: TaskId
   sort: SortKey
   hideTooBig: boolean
-  theme: ThemeId
   /** False until the user has set memory themselves; drives the "please confirm" hint. */
   memoryConfirmed: boolean
 }
@@ -23,6 +21,5 @@ export const DEFAULT_SETTINGS: Settings = {
   task: 'chat',
   sort: 'best',
   hideTooBig: true,
-  theme: 'aqua',
   memoryConfirmed: false,
 }

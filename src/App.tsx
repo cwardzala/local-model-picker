@@ -6,19 +6,14 @@ import { DEFAULT_SETTINGS } from './lib/settings'
 import { taskById } from './lib/tasks'
 import { HardwarePanel } from './components/HardwarePanel'
 import { ModelList } from './components/ModelList'
+import { Section } from './components/Section'
 import { TaskPicker } from './components/TaskPicker'
-import { ThemePicker } from './components/ThemePicker'
-import { Window } from './components/Window'
 
 export function App() {
   const [settings, setSettings] = useStoredState('lmp.settings', DEFAULT_SETTINGS)
   const [query, setQuery] = useState('')
   const [search, setSearch] = useState('')
   const task = taskById(settings.task)
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = settings.theme
-  }, [settings.theme])
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(query), 400)
@@ -39,27 +34,26 @@ export function App() {
 
   return (
     <main>
-      <div class="masthead">
-        <h1>Local Model Picker <small>v{__APP_VERSION__}</small></h1>
-        <ThemePicker value={settings.theme} onChange={(theme) => setSettings({ ...settings, theme })} />
-      </div>
-      <p class="tag">Find the best open model your machine can actually run. Live data from Hugging Face.</p>
+      <header class="masthead">
+        <h1>Local Model Picker</h1>
+        <p>The best open model your machine can run, for the job you have in mind.</p>
+      </header>
 
       <div class="layout">
         <aside>
-          <Window title="1. Your computer">
+          <Section title="Your computer">
             <HardwarePanel settings={settings} onChange={setSettings} />
-          </Window>
+          </Section>
         </aside>
 
         <div class="main-col">
-          <Window title="2. What will you use it for?">
+          <Section title="What for?">
             <TaskPicker value={settings.task} onChange={(id) => setSettings({ ...settings, task: id })} />
-          </Window>
+          </Section>
 
-          <Window title={`3. Best matches${ranked.length ? ` (${ranked.length})` : ''}`}>
+          <Section title="Recommended" note={ranked.length ? `${ranked.length} models` : undefined}>
             <div class="toolbar">
-              <input type="search" placeholder="Search models (e.g. qwen, llama, gemma)…"
+              <input type="search" placeholder="Search models (qwen, llama, gemma…)"
                 value={query} onInput={(e) => setQuery(e.currentTarget.value)} />
               <select aria-label="Sort" value={settings.sort}
                 onChange={(e) => setSettings({ ...settings, sort: e.currentTarget.value as SortKey })}>
@@ -74,11 +68,15 @@ export function App() {
               </label>
             </div>
             <ModelList items={ranked} hw={settings.hardware} loading={loading} error={error}
-              hasMore={Boolean(next)} onMore={loadMore} />
-          </Window>
+              hasMore={Boolean(next)} highlightTop={settings.sort === 'best'} onMore={loadMore} />
+          </Section>
         </div>
       </div>
-      <footer>Estimates assume llama.cpp-style GGUF quants; real speed varies with backend and context.</footer>
+
+      <footer>
+        Live data from Hugging Face. Estimates assume llama.cpp GGUF quants; real speed varies with backend and context.
+        <span> · v{__APP_VERSION__}</span>
+      </footer>
     </main>
   )
 }

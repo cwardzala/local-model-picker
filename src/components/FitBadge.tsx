@@ -8,5 +8,5 @@ const LABEL: Record<Fit, string> = {
 }
 
 export function FitBadge({ fit }: { fit: Fit }) {
-  return <span class={`badge fit-${fit}`}>{LABEL[fit]}</span>
+  return <span class={`fit fit-${fit}`}>{LABEL[fit]}</span>
 }
