@@ -1,7 +1,7 @@
 {
   "name": "local-model-picker",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pick the best local AI model for your hardware and task, using live Hugging Face data",
   "license": "MIT",
   "repository": {
