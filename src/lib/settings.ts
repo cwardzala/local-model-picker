@@ -10,6 +10,7 @@ export interface Settings {
   task: TaskId
   sort: SortKey
   hideTooBig: boolean
+  groupSimilar: boolean
   /** False until the user has set memory themselves; drives the "please confirm" hint. */
   memoryConfirmed: boolean
   introDismissed: boolean
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   task: 'chat',
   sort: 'best',
   hideTooBig: true,
+  groupSimilar: true,
   memoryConfirmed: false,
   introDismissed: false,
 }

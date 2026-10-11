@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { activeParamsFromId, evaluate, pickQuant } from './estimate'
 import { QUANTS } from './quants'
-import { effectiveParamsB, rankModel } from './rank'
+import { effectiveParamsB, groupRanked, rankModel, variantKey } from './rank'
 import { taskById } from './tasks'
 import type { Hardware, HfModel } from './types'
 
@@ -84,5 +84,33 @@ describe('mixture-of-experts ranking', () => {
   it('still runs faster than a dense model of the same total size', () => {
     const dense = rankModel(model(30), hw, task).evaluation.tokensPerSec
     expect(rankModel(moe, hw, task).evaluation.tokensPerSec).toBeGreaterThan(dense)
+  })
+})
+
+describe('groupRanked', () => {
+  const hw = mac(64, 400)
+  const task = taskById('chat')
+  const ranked = (id: string, paramsB: number, over: Partial<HfModel> = {}) =>
+    rankModel(model(paramsB, { id, architecture: 'llama', ...over }), hw, task)
+
+  it('puts re-quantisations and fine-tunes of the same size together', () => {
+    expect(variantKey(model(34.7, { architecture: 'qwen35moe' }))).toBe(
+      variantKey(model(35.5, { architecture: 'qwen35moe' })),
+    )
+  })
+  it('keeps different sizes and architectures apart', () => {
+    expect(variantKey(model(8, { architecture: 'llama' }))).not.toBe(variantKey(model(14, { architecture: 'llama' })))
+    expect(variantKey(model(8, { architecture: 'llama' }))).not.toBe(variantKey(model(8, { architecture: 'gemma' })))
+    expect(variantKey(model(30, { architecture: 'q', activeParamsB: 3 }))).not.toBe(variantKey(model(30, { architecture: 'q' })))
+  })
+  it('keeps the first (best) member as lead, in its original position', () => {
+    const list = [ranked('a/best-8b', 8), ranked('a/other-14b', 14), ranked('b/fine-tune-8b', 8)]
+    const groups = groupRanked(list)
+    expect(groups.map((g) => g.lead.model.id)).toEqual(['a/best-8b', 'a/other-14b'])
+    expect(groups[0].similar.map((r) => r.model.id)).toEqual(['b/fine-tune-8b'])
+  })
+  it('leaves the list alone when disabled', () => {
+    const list = [ranked('a/x-8b', 8), ranked('b/y-8b', 8)]
+    expect(groupRanked(list, false)).toHaveLength(2)
   })
 })

@@ -136,3 +136,13 @@ footer { margin-top: 40px; color: var(--muted); font-size: 12px; }
 .why li { display: grid; }
 .why li strong { color: var(--ink); font-weight: 600; }
 .why p { margin: 4px 0 0; }
+
+.similar { font-size: 13px; color: var(--muted); }
+.similar summary { cursor: pointer; color: var(--accent); width: fit-content; }
+.similar p { margin: 6px 0; }
+.similar ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.similar li { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.similar a { color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+.similar a:hover { color: var(--accent); text-decoration: underline; }
+.similar-meta { display: flex; gap: 8px; align-items: baseline; white-space: nowrap; font-size: 12px; }
+.similar-meta b { color: var(--accent); }

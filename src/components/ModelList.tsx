@@ -1,9 +1,9 @@
-import type { RankedModel } from '../lib/rank'
+import type { RankedGroup } from '../lib/rank'
 import type { Hardware } from '../lib/types'
 import { ModelCard } from './ModelCard'
 
 interface Props {
-  items: RankedModel[]
+  groups: RankedGroup[]
   hw: Hardware
   loading: boolean
   error?: string
@@ -14,16 +14,23 @@ interface Props {
   onMore: () => void
 }
 
-export function ModelList({ items, hw, loading, error, hasMore, highlightTop, taskLabel, onMore }: Props) {
+export function ModelList({ groups, hw, loading, error, hasMore, highlightTop, taskLabel, onMore }: Props) {
   if (error) return <p class="status err">Couldn’t reach Hugging Face: {error}</p>
-  if (!items.length) {
+  if (!groups.length) {
     return <p class="status">{loading ? 'Asking Hugging Face…' : 'No models match. Try a different search or hide fewer.'}</p>
   }
   return (
     <>
       <div class="grid">
-        {items.map((r, i) => (
-          <ModelCard key={r.model.id} ranked={r} hw={hw} taskLabel={taskLabel} topPick={highlightTop && i === 0 && r.evaluation.fit !== 'no'} />
+        {groups.map(({ lead, similar }, i) => (
+          <ModelCard
+            key={lead.model.id}
+            ranked={lead}
+            similar={similar}
+            hw={hw}
+            taskLabel={taskLabel}
+            topPick={highlightTop && i === 0 && lead.evaluation.fit !== 'no'}
+          />
         ))}
       </div>
       {hasMore && (
