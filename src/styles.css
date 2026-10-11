@@ -73,12 +73,15 @@ small, .note { color: var(--muted); font-size: 12px; }
 .warn-note { padding: 8px 10px; border-left: 3px solid var(--warn); background: var(--surface); }
 .warn-note code { font: 11px ui-monospace, Menlo, monospace; overflow-wrap: anywhere; user-select: all; }
 
-/* Task chips */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer; }
-.chip:hover { border-color: var(--accent); }
-.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-.blurb { margin: 10px 0 0; color: var(--muted); }
+/* Task options */
+.tasks { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.task { text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); cursor: pointer; display: grid; gap: 2px; align-content: start; }
+.task:hover { border-color: var(--accent); }
+.task strong { font-size: 14px; }
+.task span { color: var(--muted); font-size: 13px; line-height: 1.4; }
+.task.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.task.on strong { color: var(--accent); }
 
 /* Results */
 .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
