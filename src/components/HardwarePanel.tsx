@@ -2,6 +2,7 @@ import { APPLE_CHIPS, GPUS, RAM_BANDWIDTH } from '../lib/presets'
 import { detectSystem, nearestMemory } from '../lib/hardware'
 import type { Settings } from '../lib/settings'
 import { Field } from './Field'
+import { NumberField } from './NumberField'
 
 const MAC_MEMORY_CMD = `sysctl -n hw.memsize | awk '{print $1/2^30" GB"}'`
 
@@ -59,7 +60,6 @@ export function HardwarePanel({ settings, onChange }: Props) {
   }
 
   const chip = APPLE_CHIPS.find((c) => c.name === settings.chip)
-  const num = (v: string, fallback: number) => Math.max(0, Number(v) || fallback)
 
   return (
     <div class="hardware">
@@ -95,8 +95,8 @@ export function HardwarePanel({ settings, onChange }: Props) {
             </select>
           </Field>
           <Field label="System RAM (GB)">
-            <input type="number" min="4" step="4" value={hw.ramGB}
-              onInput={(e) => set({ ramGB: num(e.currentTarget.value, 16) }, { memoryConfirmed: true })} />
+            <NumberField min={1} step={4} value={hw.ramGB}
+              onCommit={(ramGB) => set({ ramGB }, { memoryConfirmed: true })} />
           </Field>
           <Field label="RAM speed" hint="Matters when a model spills out of the GPU">
             <select value={hw.ramBandwidth} onChange={(e) => set({ ramBandwidth: Number(e.currentTarget.value) })}>
@@ -107,8 +107,8 @@ export function HardwarePanel({ settings, onChange }: Props) {
       )}
 
       <Field label="Free disk space (GB)">
-        <input type="number" min="0" step="10" value={hw.storageGB}
-          onInput={(e) => set({ storageGB: num(e.currentTarget.value, 100) })} />
+        <NumberField min={0} step={10} value={hw.storageGB}
+          onCommit={(storageGB) => set({ storageGB })} />
       </Field>
 
       <button type="button" class="btn" onClick={detect}>Detect my system</button>
