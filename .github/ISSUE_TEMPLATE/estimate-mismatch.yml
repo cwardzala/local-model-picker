@@ -1,0 +1,46 @@
+name: Estimate mismatch
+description: The memory or speed shown doesn't match what you measured.
+title: "Estimate mismatch: <model> on <hardware>"
+labels: ["estimates"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Speed and memory figures are rule-of-thumb estimates. Real measurements
+        are the most useful way to improve them. Thank you!
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      description: Chip or GPU, memory (RAM / VRAM), and RAM speed if you spill to system RAM.
+      placeholder: "Apple M4 Pro 48 GB   |   RTX 4070 12 GB + 32 GB DDR5"
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model and quant
+      placeholder: "unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF : Q6_K"
+    validations:
+      required: true
+  - type: input
+    id: backend
+    attributes:
+      label: Runtime
+      description: Ollama, llama.cpp, LM Studio, MLX... and the context size you used.
+    validations:
+      required: true
+  - type: textarea
+    id: shown
+    attributes:
+      label: What the app showed
+      placeholder: "Runs great, ~67 tok/s, 29.7 GB"
+    validations:
+      required: true
+  - type: textarea
+    id: measured
+    attributes:
+      label: What you measured
+      placeholder: "~42 tok/s generation, 31 GB resident"
+    validations:
+      required: true
