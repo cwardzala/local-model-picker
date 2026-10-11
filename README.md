@@ -24,7 +24,9 @@ npm run build   # ~12 KB gzipped JS (Preact)
 ## Deploy
 
 **Vercel** — import the repo; Vite is auto-detected, `vercel.json` adds cache
-and CSP headers.
+and CSP headers. Vercel Web Analytics (cookieless) is compiled in only when the
+build runs on Vercel; enable it under the project's Analytics tab. Docker and
+local builds include no analytics.
 
 **Docker** — static files on `busybox` (~6 MB image):
 
