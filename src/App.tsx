@@ -7,6 +7,7 @@ import { taskById } from './lib/tasks'
 import { HardwarePanel } from './components/HardwarePanel'
 import { ModelList } from './components/ModelList'
 import { TaskPicker } from './components/TaskPicker'
+import { ThemePicker } from './components/ThemePicker'
 import { Window } from './components/Window'
 
 export function App() {
@@ -14,6 +15,10 @@ export function App() {
   const [query, setQuery] = useState('')
   const [search, setSearch] = useState('')
   const task = taskById(settings.task)
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = settings.theme
+  }, [settings.theme])
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(query), 400)
@@ -34,7 +39,10 @@ export function App() {
 
   return (
     <main>
-      <h1>Local Model Picker <small>v{__APP_VERSION__}</small></h1>
+      <div class="masthead">
+        <h1>Local Model Picker <small>v{__APP_VERSION__}</small></h1>
+        <ThemePicker value={settings.theme} onChange={(theme) => setSettings({ ...settings, theme })} />
+      </div>
       <p class="tag">Find the best open model your machine can actually run. Live data from Hugging Face.</p>
 
       <div class="layout">

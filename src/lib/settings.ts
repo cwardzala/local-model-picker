@@ -1,6 +1,7 @@
 import type { Hardware } from './types'
 import type { TaskId } from './tasks'
 import type { SortKey } from './rank'
+import type { ThemeId } from './themes'
 import { DEFAULT_HARDWARE } from './hardware'
 
 export interface Settings {
@@ -10,6 +11,7 @@ export interface Settings {
   task: TaskId
   sort: SortKey
   hideTooBig: boolean
+  theme: ThemeId
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -19,4 +21,5 @@ export const DEFAULT_SETTINGS: Settings = {
   task: 'chat',
   sort: 'best',
   hideTooBig: true,
+  theme: 'aqua',
 }
