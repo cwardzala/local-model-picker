@@ -12,6 +12,8 @@ export interface Settings {
   sort: SortKey
   hideTooBig: boolean
   theme: ThemeId
+  /** False until the user has set memory themselves; drives the "please confirm" hint. */
+  memoryConfirmed: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -22,4 +24,5 @@ export const DEFAULT_SETTINGS: Settings = {
   sort: 'best',
   hideTooBig: true,
   theme: 'aqua',
+  memoryConfirmed: false,
 }

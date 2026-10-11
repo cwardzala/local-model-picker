@@ -1,7 +1,9 @@
 import { APPLE_CHIPS, GPUS, RAM_BANDWIDTH } from '../lib/presets'
-import { detectSystem } from '../lib/hardware'
+import { detectSystem, nearestMemory } from '../lib/hardware'
 import type { Settings } from '../lib/settings'
 import { Field } from './Field'
+
+const MAC_MEMORY_CMD = `sysctl -n hw.memsize | awk '{print $1/2^30" GB"}'`
 
 interface Props {
   settings: Settings
@@ -42,7 +44,7 @@ export function HardwarePanel({ settings, onChange }: Props) {
       const chip = APPLE_CHIPS.find((c) => c.name === d.chip)
       if (chip) {
         next.chip = chip.name
-        next.hardware = { ...next.hardware, gpuBandwidth: chip.bandwidth, vramGB: 0, ramGB: chip.memory[0] }
+        next.hardware = { ...next.hardware, gpuBandwidth: chip.bandwidth, vramGB: 0, ramGB: nearestMemory(chip.memory, d.memoryHintGB) }
       }
     } else {
       const gpu = GPUS.find((g) => g.name === d.gpu)
@@ -50,7 +52,9 @@ export function HardwarePanel({ settings, onChange }: Props) {
         next.gpu = gpu.name
         next.hardware = { ...next.hardware, vramGB: gpu.vramGB, gpuBandwidth: gpu.bandwidth }
       }
+      if (d.memoryHintGB) next.hardware = { ...next.hardware, ramGB: Math.max(d.memoryHintGB, 8) }
     }
+    next.memoryConfirmed = false
     onChange(next)
   }
 
@@ -78,7 +82,7 @@ export function HardwarePanel({ settings, onChange }: Props) {
             </select>
           </Field>
           <Field label="Unified memory" hint="Shared by CPU and GPU">
-            <select value={hw.ramGB} onChange={(e) => set({ ramGB: Number(e.currentTarget.value) })}>
+            <select value={hw.ramGB} onChange={(e) => set({ ramGB: Number(e.currentTarget.value) }, { memoryConfirmed: true })}>
               {(chip?.memory ?? [8, 16, 32, 64, 128]).map((m) => <option value={m}>{m} GB</option>)}
             </select>
           </Field>
@@ -92,7 +96,7 @@ export function HardwarePanel({ settings, onChange }: Props) {
           </Field>
           <Field label="System RAM (GB)">
             <input type="number" min="4" step="4" value={hw.ramGB}
-              onInput={(e) => set({ ramGB: num(e.currentTarget.value, 16) })} />
+              onInput={(e) => set({ ramGB: num(e.currentTarget.value, 16) }, { memoryConfirmed: true })} />
           </Field>
           <Field label="RAM speed" hint="Matters when a model spills out of the GPU">
             <select value={hw.ramBandwidth} onChange={(e) => set({ ramBandwidth: Number(e.currentTarget.value) })}>
@@ -108,7 +112,18 @@ export function HardwarePanel({ settings, onChange }: Props) {
       </Field>
 
       <button type="button" class="btn" onClick={detect}>Detect my system</button>
-      <small class="note">Browsers hide your RAM, so confirm the memory above.</small>
+      {settings.memoryConfirmed ? (
+        <small class="note">Memory confirmed.</small>
+      ) : (
+        <div class="note warn-note">
+          <strong>Please confirm your memory.</strong> Browsers can’t read RAM, so this is a guess.{' '}
+          {hw.platform === 'mac' ? (
+            <>Apple menu → About This Mac, or run <code>{MAC_MEMORY_CMD}</code></>
+          ) : (
+            <>Task Manager → Performance → Memory (Windows), or <code>free -g</code> (Linux).</>
+          )}
+        </div>
+      )}
     </div>
   )
 }

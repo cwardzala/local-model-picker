@@ -280,3 +280,6 @@ input, select { font: inherit; color: var(--ink); padding: 4px 6px; border: var(
 .status { padding: 20px; text-align: center; color: var(--muted); }
 .status.err { color: var(--bad); }
 footer { margin-top: 16px; color: var(--head-ink); font-size: 11px; text-align: center; text-shadow: var(--head-shadow); }
+
+.warn-note { border: 1px dashed var(--warn); padding: 6px 8px; border-radius: var(--field-radius); font-size: 11px; }
+.warn-note code { font-family: ui-monospace, Menlo, monospace; font-size: 10px; overflow-wrap: anywhere; user-select: all; }

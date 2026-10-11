@@ -6,6 +6,8 @@ export interface Detection {
   chip?: string
   gpu?: string
   cores: number
+  /** Browser's rough RAM report; capped and bucketed, so only a hint. */
+  memoryHintGB?: number
 }
 
 /** Best-effort sniffing; browsers hide RAM, so callers must still ask for it. */
@@ -27,7 +29,8 @@ export function detectSystem(): Detection {
     const model = /(RTX|RX) ?\d{4}( Ti| XT| XTX| Super)*/i.exec(g.name)?.[0]
     return model && renderer.toLowerCase().includes(model.toLowerCase())
   })?.name
-  return { platform, chip, gpu, cores: navigator.hardwareConcurrency || 0 }
+  const memoryHintGB = (navigator as Navigator & { deviceMemory?: number }).deviceMemory
+  return { platform, chip, gpu, cores: navigator.hardwareConcurrency || 0, memoryHintGB }
 }
 
 export const DEFAULT_HARDWARE: Hardware = {
@@ -37,4 +40,10 @@ export const DEFAULT_HARDWARE: Hardware = {
   gpuBandwidth: 120,
   ramBandwidth: 80,
   storageGB: 256,
+}
+
+/** Closest option at or above the hint; the largest option if none is big enough. */
+export function nearestMemory(options: number[], hint?: number): number {
+  if (!hint) return options[0]
+  return options.find((m) => m >= hint) ?? options[options.length - 1]
 }
